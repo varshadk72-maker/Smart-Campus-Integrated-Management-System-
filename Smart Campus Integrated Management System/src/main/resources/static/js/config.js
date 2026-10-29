@@ -11,7 +11,8 @@ SCMS.config = {
     resources: '/resources',
     bookings: '/bookings', myBookings: '/bookings/my', cancelBooking: id => `/bookings/${id}/cancel`, bookingStatus: id => `/bookings/${id}/status`,
     students: '/students', facultyAll: '/faculty', courses: '/courses',
-    stats: '/admin/stats', report: t => `/admin/reports/${t}`
+    stats: '/admin/stats', report: t => `/admin/reports/${t}`,
+    activityRegistrationsCsv: '/admin/reports/activities/registrations.csv'
   },
   REPORTS: [['students','Students'],['faculty','Faculty'],['courses','Courses'],['bookings','Bookings'],['activities','Activities']],
   /* UI-only permissions: hide actions a role cannot use. The backend remains the real security control. */

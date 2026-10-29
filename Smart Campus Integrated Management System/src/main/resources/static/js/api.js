@@ -7,12 +7,13 @@
     return typeof e === 'object' ? e : null;
   }
   async function request(method, path, body, opts = {}) {
-    const headers = { Accept: 'application/json' };
+    const headers = { Accept: opts.responseType === 'blob' ? 'text/csv' : 'application/json' };
     const t = S.auth.token(); if (t) headers.Authorization = 'Bearer ' + t;
     if (body !== undefined) headers['Content-Type'] = 'application/json';
     let res;
     try { res = await fetch(S.config.API_BASE + path, { method, headers, credentials: 'include', body: body !== undefined ? JSON.stringify(body) : undefined }); }
     catch { throw new ApiError(0, 'Cannot reach the server. Check your connection and that the backend is running.'); }
+    if (res.ok && opts.responseType === 'blob') return res.blob();
     let data = null; const txt = await res.text();
     if (txt) { try { data = JSON.parse(txt); } catch { data = null; } }
     if (res.ok) return data;
@@ -28,6 +29,7 @@
     ApiError,
     get: (p, o) => request('GET', p, undefined, o), post: (p, b, o) => request('POST', p, b, o),
     put: (p, b, o) => request('PUT', p, b, o), patch: (p, b, o) => request('PATCH', p, b, o), del: (p, o) => request('DELETE', p, undefined, o),
+    download: p => request('GET', p, undefined, { responseType: 'blob' }),
     list: async p => rows(await request('GET', p))
   };
 })();
