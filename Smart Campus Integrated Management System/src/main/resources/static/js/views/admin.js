@@ -16,8 +16,16 @@
   const reports = c => {
     const el = S.card(c);
     el.innerHTML = `<div class="toolbar"><div class="f"><label for="rt">Report</label><select id="rt">${S.config.REPORTS.map(([k, l]) => `<option value="${k}">${esc(l)}</option>`).join('')}</select></div>
-      <button class="btn" id="csv" disabled>Export CSV</button><button class="btn" id="prn">Print</button></div><div id="rb"></div>`;
-    const rb = el.querySelector('#rb'), sel = el.querySelector('#rt'), csv = el.querySelector('#csv'); let rows = [];
+      <button class="btn" id="csv" disabled>Export report CSV</button><button class="btn" id="registrationCsv">Export registrations CSV</button><button class="btn" id="prn">Print</button></div><div id="rb"></div>`;
+    const rb = el.querySelector('#rb'), sel = el.querySelector('#rt'), csv = el.querySelector('#csv');
+    el.querySelector('#registrationCsv').onclick = async () => {
+      try {
+        const blob = await S.api.download(E.activityRegistrationsCsv), url = URL.createObjectURL(blob);
+        const a = Object.assign(document.createElement('a'), { href: url, download: 'activity-registrations.csv' });
+        a.click(); URL.revokeObjectURL(url);
+      } catch (e) { U.toast(e.message, 'error'); }
+    };
+    let rows = [];
     const run = async () => {
       U.loading(rb, 'Generating report…'); csv.disabled = true;
       try {
@@ -62,7 +70,7 @@
       fields: () => [{ name: 'name', label: 'Name', required: true }, { name: 'type', label: 'Type', type: 'select', required: true, options: ['Classroom', 'Laboratory', 'Auditorium', 'Seminar Hall', 'Sports', 'Equipment'] }, { name: 'location', label: 'Location' }, { name: 'capacity', label: 'Capacity', type: 'number', min: 1 }, { name: 'status', label: 'Status', type: 'select', required: true, options: ['AVAILABLE', 'UNAVAILABLE', 'MAINTENANCE'] }] }) },
     { id: 'approvals', label: 'Booking Approvals', icon: 'check', desc: 'Review and decide on resource booking requests.', render: approvals },
     { id: 'activities', label: 'Campus Activities', icon: 'cal', desc: 'Create and manage campus events.', render: V.crud({ path: E.activities, noun: 'activity', perm: 'activity:write', searchKeys: ['title', 'venue', 'category'], filters: [{ key: 'category', label: 'Category' }],
-      columns: [{ key: 'title', label: 'Title' }, { key: 'category', label: 'Category' }, { key: 'venue', label: 'Venue' }, { key: 'eventDate', label: 'When', format: 'date' }],
-      fields: () => [{ name: 'title', label: 'Title', required: true, full: true }, { name: 'category', label: 'Category', type: 'select', required: true, options: ['Academic', 'Cultural', 'Sports', 'Technical', 'Workshop'] }, { name: 'venue', label: 'Venue', required: true }, { name: 'eventDate', label: 'Date & time', type: 'datetime-local', required: true }, { name: 'description', label: 'Description', type: 'textarea', full: true }] }) },
+      columns: [{ key: 'title', label: 'Title' }, { key: 'category', label: 'Category' }, { key: 'venue', label: 'Venue' }, { key: 'eventDate', label: 'When', format: 'date' }, { key: 'capacity', label: 'Capacity' }],
+      fields: () => [{ name: 'title', label: 'Title', required: true, full: true }, { name: 'category', label: 'Category', type: 'select', required: true, options: ['Academic', 'Cultural', 'Sports', 'Technical', 'Workshop'] }, { name: 'venue', label: 'Venue', required: true }, { name: 'eventDate', label: 'Date & time', type: 'datetime-local', required: true }, { name: 'capacity', label: 'Maximum capacity', type: 'number', min: 1, step: 1, required: true }, { name: 'description', label: 'Description', type: 'textarea', full: true }] }) },
     { id: 'reports', label: 'Reports', icon: 'chart', desc: 'Generate, export and print reports.', render: reports }] });
 })();

@@ -32,7 +32,7 @@ List endpoints may return a plain array **or** a Spring `Page` (`content: []`).
 | Faculty CRUD | GET/POST `/faculty`, PUT/DELETE `/faculty/{id}` | `{employeeId,name,email,department,phone,designation,password(create)}` | rows as profile |
 | Courses CRUD | GET/POST `/courses`, PUT/DELETE `/courses/{id}` | `{code,name,credits,semester,department,facultyId}` | `faculty:{id,name}` |
 | Resources CRUD | POST `/resources`, PUT/DELETE `/resources/{id}` | `{name,type,location,capacity,status}` | – |
-| Activities CRUD | POST `/activities`, PUT/DELETE `/activities/{id}` | `{title,category,venue,eventDate,description}` | – |
+| Activities CRUD | POST `/activities`, PUT/DELETE `/activities/{id}` | `{title,category,venue,eventDate,description,capacity}` | – |
 | Statistics | GET `/admin/stats` | – | flat object of numbers, e.g. `{totalStudents:…}` — each key becomes a card, label auto-humanised |
 | Reports | GET `/admin/reports/{students\|faculty\|courses\|bookings\|activities}` | – | array of flat objects; columns = keys of first row |
 
